@@ -214,7 +214,7 @@ class SandboxBase(metaclass=ABCMeta):
         self.set_env = {}
         self.verbosity = 0
 
-        self.max_processes = 1
+        self.max_processes = 16
 
         # Set common environment variables.
         # Specifically needed by Python, that searches the home for
@@ -231,7 +231,7 @@ class SandboxBase(metaclass=ABCMeta):
             # Max processes is set to 1000 to limit the effect of fork bombs.
             self.max_processes = 1000
         else:
-            self.max_processes = 1
+            self.max_processes = 16
 
     def get_stats(self):
         """Return a human-readable string representing execution time
