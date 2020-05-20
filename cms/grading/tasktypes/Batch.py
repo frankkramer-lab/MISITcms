@@ -251,31 +251,16 @@ class Batch(TaskType):
             return
 
         # Prepare the execution
+        files_to_get = {
+            self._actual_input: job.input
+        }
         executable_filename = next(iter(job.executables.keys()))
         language = get_language(job.language)
         main = self.GRADER_BASENAME \
             if self._uses_grader() else executable_filename
-        commands = language.get_evaluation_commands(
-            executable_filename, main=main)
         executables_to_get = {
             executable_filename: job.executables[executable_filename].digest
         }
-        files_to_get = {
-            self._actual_input: job.input
-        }
-
-        # Check which redirect we need to perform, and in case we don't
-        # manage the output via redirect, the submission needs to be able
-        # to write on it.
-        files_allowing_write = []
-        stdin_redirect = None
-        stdout_redirect = None
-        if len(self.input_filename) == 0:
-            stdin_redirect = self._actual_input
-        if len(self.output_filename) == 0:
-            stdout_redirect = self._actual_output
-        else:
-            files_allowing_write.append(self._actual_output)
 
         # Create the sandbox
         sandbox = create_sandbox(file_cacher, name="evaluate")
@@ -286,6 +271,28 @@ class Batch(TaskType):
             sandbox.create_file_from_storage(filename, digest, executable=True)
         for filename, digest in files_to_get.items():
             sandbox.create_file_from_storage(filename, digest)
+
+        # Check which redirect we need to perform, and in case we don't
+        # manage the output via redirect, the submission needs to be able
+        # to write on it.
+        files_allowing_write = []
+        args = []
+        stdin_redirect = None
+        stdout_redirect = None
+        if len(self.input_filename) == 0:
+            # stdin_redirect = self._actual_input       # Deactive stdin forever
+                                                        # Because no one uses it ;)
+            with sandbox.get_file_text(self._actual_input) as args_reader:
+                args_string = args_reader.read().rstrip()
+                args = args_string.split(" ")
+        if len(self.output_filename) == 0:
+            stdout_redirect = self._actual_output
+        else:
+            files_allowing_write.append(self._actual_output)
+
+        # Create the execution command
+        commands = language.get_evaluation_commands(
+                    executable_filename, main=main, args=args)
 
         # Actually performs the execution
         box_success, evaluation_success, stats = evaluation_step(
