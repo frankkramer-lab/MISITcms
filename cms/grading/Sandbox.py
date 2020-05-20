@@ -934,7 +934,7 @@ class IsolateSandbox(SandboxBase):
         self.set_env["PYTHONIOENCODING"] = "utf8"
         self.inherit_env.append("LC_ALL")
         # MISITcms: Mount the cms-course/data directory for accessing data files
-        self.maybe_add_mapped_directory("/root/cms-data/", dest="/data/")
+        self.maybe_add_mapped_directory("/root/cms-data/data/", dest="/data/")
 
         # Tell isolate to get the sandbox ready. We do our best to cleanup
         # after ourselves, but we might have missed something if a previous
