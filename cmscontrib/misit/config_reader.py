@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-# Contest Management System - http://cms-dev.github.io/
-# Copyright © 2015-2016 Stefano Maggiolo <s.maggiolo@gmail.com>
+# MISITcms - https://github.com/frankkramer-lab/MISITcms/
+# Copyright © 2020 Dominik Müller, Johann Frei
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
