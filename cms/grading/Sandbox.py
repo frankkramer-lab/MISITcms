@@ -935,6 +935,9 @@ class IsolateSandbox(SandboxBase):
         self.inherit_env.append("LC_ALL")
         # MISITcms: Mount the cms-course/data directory for accessing data files
         self.maybe_add_mapped_directory("/root/cms-data/data/", dest="/data/")
+        # Check if allow_writing_in_home is true in the cms.conf file
+        self.allow_writing_in_home = config.allow_writing_in_home
+        print("DEBUGGING-MISIT: ", config.allow_writing_in_home)
 
         # Tell isolate to get the sandbox ready. We do our best to cleanup
         # after ourselves, but we might have missed something if a previous
@@ -978,7 +981,8 @@ class IsolateSandbox(SandboxBase):
         """Set permissions in such a way that the user cannot write anything.
 
         """
-        os.chmod(self._home, 0o755)
+        if not self.allow_writing_in_home:
+            os.chmod(self._home, 0o755)
         for filename in os.listdir(self._home):
             os.chmod(os.path.join(self._home, filename), 0o755)
 
