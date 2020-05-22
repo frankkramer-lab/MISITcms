@@ -409,12 +409,8 @@ class Communication(TaskType):
                     self.OUTPUT_FILENAME,
                     "Output file in job %s" % job.info,
                     trunc_len=100 * 1024)
-                #job.user_output_raw = sandbox_mgr.get_file_to_string(
-                #    self.OUTPUT_FILENAME,
-                #    maxlen=100 * 1024).decode("utf-8")
             else:
                 job.user_output = None
-                #job.user_output_raw = None
 
         # Fill in the job with the results.
         job.success = success
