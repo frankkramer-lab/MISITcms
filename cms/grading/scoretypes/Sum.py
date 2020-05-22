@@ -52,7 +52,10 @@ class Sum(ScoreTypeAlone):
                 {% trans %}Details{% endtrans %}
             </th>
             <th class="stdout_btn">
-                {% trans %}Output{% endtrans %}
+                {% trans %}Output stdout{% endtrans %}
+            </th>
+            <th class="stderr_btn">
+                {% trans %}Output stderr{% endtrans %}
             </th>
     {% if feedback_level == FEEDBACK_LEVEL_FULL %}
             <th class="execution-time">
@@ -83,6 +86,13 @@ class Sum(ScoreTypeAlone):
                     </td>
             {% else %}
                     <td class="stdout_btn"></td>
+            {% endif %}
+            {% if "evaluation_stderr" in tc and tc["evaluation_stderr"] is not none %}
+                    <td class="stderr_btn">
+                      {{ tc["evaluation_stderr"] }}
+                    </td>
+            {% else %}
+                    <td class="stderr_btn"></td>
             {% endif %}
             {% if feedback_level == FEEDBACK_LEVEL_FULL %}
             <td class="execution-time">
