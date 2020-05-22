@@ -380,6 +380,9 @@ class YamlLoader(ContestLoader, TaskLoader, UserLoader, TeamLoader):
         else:
             args["submission_format"] = ["%s.%%l" % name]
 
+        if "languages" in conf:
+            load(conf, args, "languages")
+
         if conf.get("score_mode", None) == SCORE_MODE_MAX:
             args["score_mode"] = SCORE_MODE_MAX
         elif conf.get("score_mode", None) == SCORE_MODE_MAX_SUBTASK:
