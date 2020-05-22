@@ -145,6 +145,7 @@ class Sum(ScoreTypeAlone):
                 "outcome": tc_outcome,
                 "text": evaluations[idx].text,
                 "evaluation_stdout": evaluations[idx].evaluation_stdout,
+                "evaluation_stderr": evaluations[idx].evaluation_stderr,
                 "time": evaluations[idx].execution_time,
                 "memory": evaluations[idx].execution_memory,
                 })

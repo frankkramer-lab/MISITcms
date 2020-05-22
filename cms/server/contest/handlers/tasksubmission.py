@@ -29,6 +29,7 @@
 
 """
 
+import json
 import logging
 import re
 
@@ -313,6 +314,31 @@ class SubmissionDetailsHandler(ContestHandler):
         self.render("submission_details.html", sr=sr, details=details,
                     **self.r_params)
 
+class SubmissionDetailsRESTHandler(ContestHandler):
+
+    refresh_cookie = False
+
+    @tornado.web.authenticated
+    @actual_phase_required(0, 3)
+    @multi_contest
+    def get(self, task_name, submission_num, evaluation_id, std_type):
+        task = self.get_task(task_name)
+        if task is None:
+            raise tornado.web.HTTPError(404)
+
+        submission = self.get_submission(task, submission_num)
+        if submission is None:
+            raise tornado.web.HTTPError(404)
+
+        sr = submission.get_result(task.active_dataset)
+        score_type = task.active_dataset.score_type_object
+
+        raw_details = None
+        if sr is not None and sr.scored():
+            raw_details = sr.score_details
+            self.write(json.dumps(raw_details))
+        else:
+            raise tornado.web.HTTPError(400)
 
 class SubmissionFileHandler(FileHandler):
     """Send back a submission file.

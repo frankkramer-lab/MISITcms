@@ -43,6 +43,7 @@ from .tasksubmission import \
     TaskSubmissionsHandler, \
     SubmissionStatusHandler, \
     SubmissionDetailsHandler, \
+    SubmissionDetailsRESTHandler, \
     SubmissionFileHandler, \
     UseTokenHandler
 from .taskusertest import \
@@ -79,6 +80,8 @@ HANDLERS = [
     (r"/tasks/(.*)/submissions/([1-9][0-9]*)", SubmissionStatusHandler),
     (r"/tasks/(.*)/submissions/([1-9][0-9]*)/details",
      SubmissionDetailsHandler),
+    (r"/tasks/(.*)/submissions/([1-9][0-9]*)/detailsREST/(.*)/(stdout|stderr)",
+     SubmissionDetailsRESTHandler),
     (r"/tasks/(.*)/submissions/([1-9][0-9]*)/files/(.*)",
      SubmissionFileHandler),
     (r"/tasks/(.*)/submissions/([1-9][0-9]*)/token", UseTokenHandler),

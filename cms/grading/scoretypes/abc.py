@@ -414,6 +414,7 @@ class ScoreTypeGroup(ScoreTypeAlone):
                     "time": evaluations[tc_idx].execution_time,
                     "memory": evaluations[tc_idx].execution_memory,
                     "evaluation_stdout": evaluations[tc_idx].evaluation_stdout,
+                    "evaluation_stderr": evaluations[tc_idx].evaluation_stderr,
                     "show_in_restricted_feedback": previous_tc_all_correct})
                 if self.public_testcases[tc_idx]:
                     public_testcases.append(testcases[-1])
