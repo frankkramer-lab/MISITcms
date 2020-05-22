@@ -937,7 +937,6 @@ class IsolateSandbox(SandboxBase):
         self.maybe_add_mapped_directory("/root/cms-data/data/", dest="/data/")
         # Check if allow_writing_in_home is true in the cms.conf file
         self.allow_writing_in_home = config.allow_writing_in_home
-        print("DEBUGGING-MISIT: ", config.allow_writing_in_home)
 
         # Tell isolate to get the sandbox ready. We do our best to cleanup
         # after ourselves, but we might have missed something if a previous
