@@ -321,11 +321,11 @@ class SubmissionDetailsRESTHandler(ContestHandler):
     @tornado.web.authenticated
     @actual_phase_required(0, 3)
     @multi_contest
-    def get(self, task_name, submission_num, evaluation_id, std_type):
+    def get(self, task_name, submission_num, task_idx, std_type):
         task = self.get_task(task_name)
         if task is None:
             raise tornado.web.HTTPError(404)
-
+        
         submission = self.get_submission(task, submission_num)
         if submission is None:
             raise tornado.web.HTTPError(404)
@@ -336,7 +336,22 @@ class SubmissionDetailsRESTHandler(ContestHandler):
         raw_details = None
         if sr is not None and sr.scored():
             raw_details = sr.score_details
-            self.write(json.dumps(raw_details))
+            # look for task_idx
+            found_element = None
+            for t_element in raw_details:
+                if t_element["idx"] == task_idx:
+                    found_element = t_element
+                    break
+            
+            if found_element is None:
+                raise tornado.web.HTTPError(400)
+
+            if std_type == "stdout":   
+                self.write(found_element["evaluation_stdout"])
+            elif std_type == "stderr":
+                self.write(found_element["evaluation_stderr"])
+            else:
+                raise tornado.web.HTTPError(400)
         else:
             raise tornado.web.HTTPError(400)
 
