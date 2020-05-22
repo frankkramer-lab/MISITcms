@@ -746,6 +746,12 @@ class Evaluation(Base):
         Unicode,
         nullable=True)
 
+    # stdout, stderr
+    evaluation_stdout = Column(
+        Unicode,
+        nullable=True
+    )
+
     @property
     def codename(self):
         """Return the codename of the testcase."""

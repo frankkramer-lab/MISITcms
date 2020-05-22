@@ -438,7 +438,7 @@ class EvaluationJob(Job):
                  input=None, output=None,
                  time_limit=None, memory_limit=None,
                  success=None, outcome=None, text=None,
-                 user_output=None, plus=None,
+                 user_output=None, user_output_raw=None, plus=None,
                  only_execution=False, get_output=False):
         """Initialization.
 
@@ -452,6 +452,9 @@ class EvaluationJob(Job):
             which to compute the score.
         user_output (unicode|None): if requested (with get_output),
             the digest of the file containing the output of the user
+            program.
+        user_output (unicode|None): if requested (with get_output),
+            the content of the file containing the output of the user
             program.
         plus ({}|None): additional metadata.
         only_execution (bool|None): whether to perform only the
@@ -472,6 +475,7 @@ class EvaluationJob(Job):
         self.memory_limit = memory_limit
         self.outcome = outcome
         self.user_output = user_output
+        self.user_output_raw = user_output_raw
         self.plus = plus
         self.only_execution = only_execution
         self.get_output = get_output
@@ -486,6 +490,7 @@ class EvaluationJob(Job):
             'memory_limit': self.memory_limit,
             'outcome': self.outcome,
             'user_output': self.user_output,
+            'user_output_raw': self.user_output_raw,
             'plus': self.plus,
             'only_execution': self.only_execution,
             'get_output': self.get_output,
@@ -536,7 +541,8 @@ class EvaluationJob(Job):
             output=testcase.output,
             time_limit=dataset.time_limit,
             memory_limit=dataset.memory_limit,
-            info=info
+            info=info,
+            get_output=True
         )
 
     def to_submission(self, sr):
@@ -557,7 +563,9 @@ class EvaluationJob(Job):
             execution_memory=self.plus.get('execution_memory'),
             evaluation_shard=self.shard,
             evaluation_sandbox=":".join(self.sandboxes),
-            testcase=sr.dataset.testcases[self.operation.testcase_codename])]
+            evaluation_stdout=self.user_output_raw,
+            testcase=sr.dataset.testcases[self.operation.testcase_codename]
+            )]
 
     @staticmethod
     def from_user_test(operation, user_test, dataset):
@@ -640,7 +648,9 @@ class EvaluationJob(Job):
         ur.execution_memory = self.plus.get('execution_memory')
         ur.evaluation_shard = self.shard
         ur.evaluation_sandbox = ":".join(self.sandboxes)
+        ur.evaluation_stdout = "NOPE"
         ur.output = self.user_output
+        ur.output_raw = self.user_output_raw
 
 
 class JobGroup:

@@ -51,6 +51,9 @@ class Sum(ScoreTypeAlone):
             <th class="details">
                 {% trans %}Details{% endtrans %}
             </th>
+            <th class="stdout_btn">
+                {% trans %}Output{% endtrans %}
+            </th>
     {% if feedback_level == FEEDBACK_LEVEL_FULL %}
             <th class="execution-time">
                 {% trans %}Execution time{% endtrans %}
@@ -74,6 +77,13 @@ class Sum(ScoreTypeAlone):
             <td class="idx">{{ loop.index }}</td>
             <td class="outcome">{{ _(tc["outcome"]) }}</td>
             <td class="details">{{ tc["text"]|format_status_text }}</td>
+            {% if "evaluation_stdout" in tc and tc["evaluation_stdout"] is not none %}
+                    <td class="stdout_btn">
+                      {{ tc["evaluation_stdout"] }}
+                    </td>
+            {% else %}
+                    <td class="stdout_btn"></td>
+            {% endif %}
             {% if feedback_level == FEEDBACK_LEVEL_FULL %}
             <td class="execution-time">
                 {% if tc["time"] is not none %}
@@ -134,6 +144,7 @@ class Sum(ScoreTypeAlone):
                 "idx": idx,
                 "outcome": tc_outcome,
                 "text": evaluations[idx].text,
+                "evaluation_stdout": evaluations[idx].evaluation_stdout,
                 "time": evaluations[idx].execution_time,
                 "memory": evaluations[idx].execution_memory,
                 })

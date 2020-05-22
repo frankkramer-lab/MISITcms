@@ -245,6 +245,9 @@ class ScoreTypeGroup(ScoreTypeAlone):
                     <th class="details">
                         {% trans %}Details{% endtrans %}
                     </th>
+                    <th class="stdout_btn">
+                        {% trans %}Output{% endtrans %}
+                    </th>
     {% if feedback_level == FEEDBACK_LEVEL_FULL %}
                     <th class="execution-time">
                         {% trans %}Execution time{% endtrans %}
@@ -272,6 +275,13 @@ class ScoreTypeGroup(ScoreTypeAlone):
                     <td class="details">
                       {{ tc["text"]|format_status_text }}
                     </td>
+            {% if "evaluation_stdout" in tc and tc["evaluation_stdout"] is not none %}
+                    <td class="stdout_btn">
+                      {{ tc["evaluation_stdout"] }}
+                    </td>
+            {% else %}
+                    <td class="stdout_btn"></td>
+            {% endif %}
             {% if feedback_level == FEEDBACK_LEVEL_FULL %}
                     <td class="execution-time">
                 {% if "time" in tc and tc["time"] is not none %}
@@ -403,6 +413,7 @@ class ScoreTypeGroup(ScoreTypeAlone):
                     "text": evaluations[tc_idx].text,
                     "time": evaluations[tc_idx].execution_time,
                     "memory": evaluations[tc_idx].execution_memory,
+                    "evaluation_stdout": evaluations[tc_idx].evaluation_stdout,
                     "show_in_restricted_feedback": previous_tc_all_correct})
                 if self.public_testcases[tc_idx]:
                     public_testcases.append(testcases[-1])
