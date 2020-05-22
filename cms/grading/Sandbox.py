@@ -915,6 +915,7 @@ class IsolateSandbox(SandboxBase):
         self.verbosity = 0             # -v
         self.wallclock_timeout = None  # -w
         self.extra_timeout = None      # -x
+        self.enable_networking = None  # --share-net
 
         self.add_mapped_directory(
             self._home, dest=self._home_dest, options="rw")
@@ -935,8 +936,10 @@ class IsolateSandbox(SandboxBase):
         self.inherit_env.append("LC_ALL")
         # MISITcms: Mount the cms-course/data directory for accessing data files
         self.maybe_add_mapped_directory("/root/cms-data/data/", dest="/data/")
-        # Check if allow_writing_in_home is true in the cms.conf file
+        # MISITcms: Check if allow_writing_in_home is true in the cms.conf file
         self.allow_writing_in_home = config.allow_writing_in_home
+        # MISITcms: Check if enabling networking is true in the cms.conf file
+        self.enable_networking = config.enable_networking
 
         # Tell isolate to get the sandbox ready. We do our best to cleanup
         # after ourselves, but we might have missed something if a previous
@@ -1125,6 +1128,9 @@ class IsolateSandbox(SandboxBase):
             res += ["--wall-time=%g" % self.wallclock_timeout]
         if self.extra_timeout is not None:
             res += ["--extra-time=%g" % self.extra_timeout]
+        # MISITcms: Added sharing network option to isolate call
+        if self.enable_networking:
+            res += ["--share-net"]
         res += ["--meta=%s" % ("%s.%d" % (self.info_basename, self.exec_num))]
         res += ["--run"]
         return res
