@@ -303,7 +303,7 @@ class TwoSteps(TaskType):
             text = human_evaluation_message(stats)
             if job.get_output:
                 job.user_output = None
-                job.user_output_raw = None
+                #job.user_output_raw = None
 
         # Otherwise, advance to checking the solution
         else:
@@ -315,7 +315,7 @@ class TwoSteps(TaskType):
                         TwoSteps.OUTPUT_FILENAME]
                 if job.get_output:
                     job.user_output = None
-                    job.user_output_raw = None
+                    #job.user_output_raw = None
 
             else:
                 # If asked so, put the output file into the storage
@@ -324,9 +324,9 @@ class TwoSteps(TaskType):
                         TwoSteps.OUTPUT_FILENAME,
                         "Output file in job %s" % job.info,
                         trunc_len=100 * 1024)
-                    job.user_output_raw = second_sandbox.get_file_to_string(
-                        TwoSteps.OUTPUT_FILENAME,
-                        maxlen=100 * 1024).decode("utf-8")
+                    #job.user_output_raw = second_sandbox.get_file_to_string(
+                    #    TwoSteps.OUTPUT_FILENAME,
+                    #    maxlen=100 * 1024).decode("utf-8")
 
                 # If just asked to execute, fill text and set dummy outcome.
                 if job.only_execution:

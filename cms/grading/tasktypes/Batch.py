@@ -318,7 +318,7 @@ class Batch(TaskType):
             text = human_evaluation_message(stats)
             if job.get_output:
                 job.user_output = None
-                job.user_output_raw = None
+                #job.user_output_raw = None
 
         # Otherwise, advance to checking the solution
         else:
@@ -330,7 +330,7 @@ class Batch(TaskType):
                         self._actual_output]
                 if job.get_output:
                     job.user_output = None
-                    job.user_output_raw = None
+                    #job.user_output_raw = None
 
             else:
                 # If asked so, put the output file into the storage.
@@ -339,9 +339,9 @@ class Batch(TaskType):
                         self._actual_output,
                         "Output file in job %s" % job.info,
                         trunc_len=100 * 1024)
-                    job.user_output_raw = sandbox.get_file_to_string(
-                        self._actual_output,
-                        maxlen=100 * 1024).decode("utf-8")
+                    #job.user_output_raw = sandbox.get_file_to_string(
+                    #    self._actual_output,
+                    #    maxlen=100 * 1024).decode("utf-8")
 
                 # If just asked to execute, fill text and set dummy outcome.
                 if job.only_execution:
@@ -363,5 +363,6 @@ class Batch(TaskType):
         job.outcome = str(outcome) if outcome is not None else None
         job.text = text
         job.plus = stats
+        
 
         delete_sandbox(sandbox, job.success, job.keep_sandbox)
