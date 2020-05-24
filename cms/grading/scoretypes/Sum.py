@@ -51,11 +51,8 @@ class Sum(ScoreTypeAlone):
             <th class="details">
                 {% trans %}Details{% endtrans %}
             </th>
-            <th class="stdout_btn">
-                {% trans %}Output stdout{% endtrans %}
-            </th>
-            <th class="stderr_btn">
-                {% trans %}Output stderr{% endtrans %}
+            <th class="std_btn">
+                {% trans %}Output{% endtrans %}
             </th>
     {% if feedback_level == FEEDBACK_LEVEL_FULL %}
             <th class="execution-time">
@@ -80,19 +77,26 @@ class Sum(ScoreTypeAlone):
             <td class="idx">{{ loop.index }}</td>
             <td class="outcome">{{ _(tc["outcome"]) }}</td>
             <td class="details">{{ tc["text"]|format_status_text }}</td>
-            {% if "evaluation_stdout" in tc and tc["evaluation_stdout"] is not none %}
-                    <td class="stdout_btn">
-                      {{ tc["evaluation_stdout"] }}
+            {% if "evaluation_stdout" in tc and tc["evaluation_stdout"] is not none and "evaluation_stderr" in tc and tc["evaluation_stderr"] is not none %}
+                <td class="std_btn">
+                <div class="dropdown">
+                    <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">Download outputs
+                    <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a download="stdout.txt" onclick="accessOutput(this, utils.contest_url('tasks', '{{ tc["task_name"] }}', 'submissions', '{{ tc["submission_num"] }}', 'detailsREST', '{{ tc["idx"] }}', 'stdout'));">
+                            stdout
+                            </a>
+                        </li>
+                        <li>
+                            <a download="stderr.txt" onclick="accessOutput(this, utils.contest_url('tasks', '{{ tc["task_name"] }}', 'submissions', '{{ tc["submission_num"] }}', 'detailsREST', '{{ tc["idx"] }}', 'stderr'));">
+                            stderr
+                            </a>
+                        </li>
+                    </ul>
                     </td>
             {% else %}
-                    <td class="stdout_btn"></td>
-            {% endif %}
-            {% if "evaluation_stderr" in tc and tc["evaluation_stderr"] is not none %}
-                    <td class="stderr_btn">
-                      {{ tc["evaluation_stderr"] }}
-                    </td>
-            {% else %}
-                    <td class="stderr_btn"></td>
+                    <td class="std_btn">Info missing</td>
             {% endif %}
             {% if feedback_level == FEEDBACK_LEVEL_FULL %}
             <td class="execution-time">
@@ -119,7 +123,16 @@ class Sum(ScoreTypeAlone):
         {% endif %}
     {% endfor %}
     </tbody>
-</table>"""
+</table>
+<script>
+function accessOutput(obj,link_url) {
+    if (!obj.hasAttribute("href")) {
+        obj.href = link_url;
+        obj.onclick = () => false;
+        obj.click();
+    }
+}
+</script>"""
 
     def max_scores(self):
         """See ScoreType.max_score."""

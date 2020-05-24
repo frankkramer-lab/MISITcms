@@ -308,6 +308,17 @@ class SubmissionDetailsHandler(ContestHandler):
             else:
                 feedback_level = task.feedback_level
 
+            # Append additional information to all evaluations
+            # TODO: Find cleaner alternative
+            if raw_details is not None:
+                patched_details = []
+                for d in raw_details:
+                    d["submission_num"] = submission_num
+                    d["task_name"] = task.name
+                    patched_details.append(d)
+
+                raw_details = patched_details
+
             details = score_type.get_html_details(
                 raw_details, feedback_level, translation=self.translation)
 
@@ -325,7 +336,7 @@ class SubmissionDetailsRESTHandler(ContestHandler):
         task = self.get_task(task_name)
         if task is None:
             raise tornado.web.HTTPError(404)
-        
+
         submission = self.get_submission(task, submission_num)
         if submission is None:
             raise tornado.web.HTTPError(404)
@@ -342,11 +353,11 @@ class SubmissionDetailsRESTHandler(ContestHandler):
                 if t_element["idx"] == task_idx:
                     found_element = t_element
                     break
-            
+
             if found_element is None:
                 raise tornado.web.HTTPError(400)
 
-            if std_type == "stdout":   
+            if std_type == "stdout":
                 self.write(found_element["evaluation_stdout"])
             elif std_type == "stderr":
                 self.write(found_element["evaluation_stderr"])

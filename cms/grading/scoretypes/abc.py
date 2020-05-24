@@ -246,10 +246,7 @@ class ScoreTypeGroup(ScoreTypeAlone):
                         {% trans %}Details{% endtrans %}
                     </th>
                     <th class="stdout_btn">
-                        {% trans %}Output stdout{% endtrans %}
-                    </th>
-                    <th class="stderr_btn">
-                        {% trans %}Output stderr{% endtrans %}
+                        {% trans %}Output{% endtrans %}
                     </th>
     {% if feedback_level == FEEDBACK_LEVEL_FULL %}
                     <th class="execution-time">
@@ -278,19 +275,26 @@ class ScoreTypeGroup(ScoreTypeAlone):
                     <td class="details">
                       {{ tc["text"]|format_status_text }}
                     </td>
-            {% if "evaluation_stdout" in tc and tc["evaluation_stdout"] is not none %}
-                    <td class="stdout_btn">
-                      {{ tc["evaluation_stdout"] }}
+            {% if "evaluation_stdout" in tc and tc["evaluation_stdout"] is not none and "evaluation_stderr" in tc and tc["evaluation_stderr"] is not none %}
+                <td class="std_btn">
+                <div class="dropdown">
+                    <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">Download outputs
+                    <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a download="stdout.txt" onclick="accessOutput(this, utils.contest_url('tasks', '{{ tc["task_name"] }}', 'submissions', '{{ tc["submission_num"] }}', 'detailsREST', '{{ tc["idx"] }}', 'stdout'));">
+                            stdout
+                            </a>
+                        </li>
+                        <li>
+                            <a download="stderr.txt" onclick="accessOutput(this, utils.contest_url('tasks', '{{ tc["task_name"] }}', 'submissions', '{{ tc["submission_num"] }}', 'detailsREST', '{{ tc["idx"] }}', 'stderr'));">
+                            stderr
+                            </a>
+                        </li>
+                    </ul>
                     </td>
             {% else %}
-                    <td class="stdout_btn"></td>
-            {% endif %}
-            {% if "evaluation_stderr" in tc and tc["evaluation_stderr"] is not none %}
-                    <td class="stderr_btn">
-                      {{ tc["evaluation_stderr"] }}
-                    </td>
-            {% else %}
-                    <td class="stderr_btn"></td>
+                    <td class="std_btn">Info missing</td>
             {% endif %}
             {% if feedback_level == FEEDBACK_LEVEL_FULL %}
                     <td class="execution-time">
@@ -326,7 +330,16 @@ class ScoreTypeGroup(ScoreTypeAlone):
         </table>
     </div>
 </div>
-{% endfor %}"""
+{% endfor %}
+<script>
+function accessOutput(obj,link_url) {
+    if (!obj.hasAttribute("href")) {
+        obj.href = link_url;
+        obj.onclick = () => false;
+        obj.click();
+    }
+}
+</script>"""
 
     def retrieve_target_testcases(self):
         """Return the list of the target testcases for each subtask.
@@ -426,6 +439,7 @@ class ScoreTypeGroup(ScoreTypeAlone):
                     "evaluation_stdout": evaluations[tc_idx].evaluation_stdout,
                     "evaluation_stderr": evaluations[tc_idx].evaluation_stderr,
                     "show_in_restricted_feedback": previous_tc_all_correct})
+
                 if self.public_testcases[tc_idx]:
                     public_testcases.append(testcases[-1])
                     # Only block restricted feedback if this is the first
