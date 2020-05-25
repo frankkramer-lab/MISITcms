@@ -29,6 +29,7 @@
 
 """
 
+import json
 import logging
 import re
 
@@ -307,12 +308,63 @@ class SubmissionDetailsHandler(ContestHandler):
             else:
                 feedback_level = task.feedback_level
 
+            # Append additional information to all evaluations
+            # TODO: Find cleaner alternative
+            if raw_details is not None:
+                patched_details = []
+                for d in raw_details:
+                    d["submission_num"] = submission_num
+                    d["task_name"] = task.name
+                    patched_details.append(d)
+
+                raw_details = patched_details
+
             details = score_type.get_html_details(
                 raw_details, feedback_level, translation=self.translation)
 
         self.render("submission_details.html", sr=sr, details=details,
                     **self.r_params)
 
+class SubmissionDetailsRESTHandler(ContestHandler):
+
+    refresh_cookie = False
+
+    @tornado.web.authenticated
+    @actual_phase_required(0, 3)
+    @multi_contest
+    def get(self, task_name, submission_num, task_idx, std_type):
+        task = self.get_task(task_name)
+        if task is None:
+            raise tornado.web.HTTPError(404)
+
+        submission = self.get_submission(task, submission_num)
+        if submission is None:
+            raise tornado.web.HTTPError(404)
+
+        sr = submission.get_result(task.active_dataset)
+        score_type = task.active_dataset.score_type_object
+
+        raw_details = None
+        if sr is not None and sr.scored():
+            raw_details = sr.score_details
+            # look for task_idx
+            found_element = None
+            for t_element in raw_details:
+                if t_element["idx"] == task_idx:
+                    found_element = t_element
+                    break
+
+            if found_element is None:
+                raise tornado.web.HTTPError(400)
+
+            if std_type == "stdout":
+                self.write(found_element["evaluation_stdout"])
+            elif std_type == "stderr":
+                self.write(found_element["evaluation_stderr"])
+            else:
+                raise tornado.web.HTTPError(400)
+        else:
+            raise tornado.web.HTTPError(400)
 
 class SubmissionFileHandler(FileHandler):
     """Send back a submission file.

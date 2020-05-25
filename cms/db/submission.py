@@ -562,6 +562,8 @@ class SubmissionResult(Base):
         self.compilation_memory = None
         self.compilation_shard = None
         self.compilation_sandbox = None
+        self.compilation_stdout = None
+        self.compilation_stderr = None
         self.executables = {}
 
     def invalidate_evaluation(self):
@@ -572,6 +574,8 @@ class SubmissionResult(Base):
         self.evaluation_outcome = None
         self.evaluation_tries = 0
         self.evaluations = []
+        self.evaluation_stdout = None
+        self.evaluation_stderr = None
 
     def invalidate_score(self):
         """Blank the score.
@@ -745,6 +749,16 @@ class Evaluation(Base):
     evaluation_sandbox = Column(
         Unicode,
         nullable=True)
+
+    # stdout, stderr
+    evaluation_stdout = Column(
+        Unicode,
+        nullable=True
+    )
+    evaluation_stderr = Column(
+        Unicode,
+        nullable=True
+    )
 
     @property
     def codename(self):

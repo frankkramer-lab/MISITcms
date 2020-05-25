@@ -51,6 +51,9 @@ class Sum(ScoreTypeAlone):
             <th class="details">
                 {% trans %}Details{% endtrans %}
             </th>
+            <th class="std_btn">
+                {% trans %}Output{% endtrans %}
+            </th>
     {% if feedback_level == FEEDBACK_LEVEL_FULL %}
             <th class="execution-time">
                 {% trans %}Execution time{% endtrans %}
@@ -74,6 +77,27 @@ class Sum(ScoreTypeAlone):
             <td class="idx">{{ loop.index }}</td>
             <td class="outcome">{{ _(tc["outcome"]) }}</td>
             <td class="details">{{ tc["text"]|format_status_text }}</td>
+            {% if "evaluation_stdout" in tc and tc["evaluation_stdout"] is not none and "evaluation_stderr" in tc and tc["evaluation_stderr"] is not none %}
+                <td class="std_btn">
+                <div class="dropdown">
+                    <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">Download outputs
+                    <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a download="stdout.txt" onclick="accessOutput(this, utils.contest_url('tasks', '{{ tc["task_name"] }}', 'submissions', '{{ tc["submission_num"] }}', 'detailsREST', '{{ tc["idx"] }}', 'stdout'));">
+                            stdout
+                            </a>
+                        </li>
+                        <li>
+                            <a download="stderr.txt" onclick="accessOutput(this, utils.contest_url('tasks', '{{ tc["task_name"] }}', 'submissions', '{{ tc["submission_num"] }}', 'detailsREST', '{{ tc["idx"] }}', 'stderr'));">
+                            stderr
+                            </a>
+                        </li>
+                    </ul>
+                    </td>
+            {% else %}
+                    <td class="std_btn">Info missing</td>
+            {% endif %}
             {% if feedback_level == FEEDBACK_LEVEL_FULL %}
             <td class="execution-time">
                 {% if tc["time"] is not none %}
@@ -99,7 +123,16 @@ class Sum(ScoreTypeAlone):
         {% endif %}
     {% endfor %}
     </tbody>
-</table>"""
+</table>
+<script>
+function accessOutput(obj,link_url) {
+    if (!obj.hasAttribute("href")) {
+        obj.href = link_url;
+        obj.onclick = () => false;
+        obj.click();
+    }
+}
+</script>"""
 
     def max_scores(self):
         """See ScoreType.max_score."""
@@ -134,6 +167,8 @@ class Sum(ScoreTypeAlone):
                 "idx": idx,
                 "outcome": tc_outcome,
                 "text": evaluations[idx].text,
+                "evaluation_stdout": evaluations[idx].evaluation_stdout,
+                "evaluation_stderr": evaluations[idx].evaluation_stderr,
                 "time": evaluations[idx].execution_time,
                 "memory": evaluations[idx].execution_memory,
                 })

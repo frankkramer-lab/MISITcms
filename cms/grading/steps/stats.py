@@ -31,7 +31,7 @@ from cms.grading.Sandbox import Sandbox
 # TODO: stats grew enough to justify having a proper object representing them.
 
 
-def execution_stats(sandbox, collect_output=False):
+def execution_stats(sandbox, collect_output=True):
     """Extract statistics from a sandbox about the last ran command.
 
     sandbox (Sandbox): the sandbox to inspect.

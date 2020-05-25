@@ -355,6 +355,14 @@ class UserTestResult(Base):
         String,
         nullable=True)
 
+    # stdout, stderr
+    evaluation_stdout = Column(
+        String,
+        nullable=True)
+    evaluation_stderr = Column(
+        String,
+        nullable=True)
+
     # These one-to-many relationships are the reversed directions of
     # the ones defined in the "child" classes using foreign keys.
 
@@ -471,6 +479,8 @@ class UserTestResult(Base):
         self.execution_memory = None
         self.evaluation_shard = None
         self.evaluation_sandbox = None
+        self.evaluation_stdout = None
+        self.evaluation_stderr = None
         self.output = None
 
     def set_compilation_outcome(self, success):
