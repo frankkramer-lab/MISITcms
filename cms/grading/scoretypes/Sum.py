@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from cms import config
 from . import ScoreTypeAlone
 
 
@@ -78,23 +79,31 @@ class Sum(ScoreTypeAlone):
             <td class="outcome">{{ _(tc["outcome"]) }}</td>
             <td class="details">{{ tc["text"]|format_status_text }}</td>
             {% if "evaluation_stdout" in tc and tc["evaluation_stdout"] is not none and "evaluation_stderr" in tc and tc["evaluation_stderr"] is not none %}
+                {% if "show_stdout" in tc and "show_stderr" in tc and (tc["show_stdout"] or tc["show_stderr"]) %}
                 <td class="std_btn">
                 <div class="dropdown">
                     <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">Download outputs
                     <span class="caret"></span></button>
                     <ul class="dropdown-menu">
+                        {% if tc["show_stdout"] %}
                         <li>
                             <a download="stdout.txt" onclick="accessOutput(this, utils.contest_url('tasks', '{{ tc["task_name"] }}', 'submissions', '{{ tc["submission_num"] }}', 'detailsREST', '{{ tc["idx"] }}', 'stdout'));">
                             stdout
                             </a>
                         </li>
+                        {% endif %}
+                        {% if tc["show_stderr"] %}
                         <li>
                             <a download="stderr.txt" onclick="accessOutput(this, utils.contest_url('tasks', '{{ tc["task_name"] }}', 'submissions', '{{ tc["submission_num"] }}', 'detailsREST', '{{ tc["idx"] }}', 'stderr'));">
                             stderr
                             </a>
                         </li>
+                        {% endif %}
                     </ul>
                     </td>
+                {% else %}
+                    <td class="std_btn">Output disabled</td>
+                {% endif %}
             {% else %}
                     <td class="std_btn">Info missing</td>
             {% endif %}
@@ -169,6 +178,8 @@ function accessOutput(obj,link_url) {
                 "text": evaluations[idx].text,
                 "evaluation_stdout": evaluations[idx].evaluation_stdout,
                 "evaluation_stderr": evaluations[idx].evaluation_stderr,
+                "show_stdout": config.enable_output_stdout,
+                "show_stderr": config.enable_output_stderr,
                 "time": evaluations[idx].execution_time,
                 "memory": evaluations[idx].execution_memory,
                 })

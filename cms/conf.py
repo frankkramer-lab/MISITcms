@@ -143,6 +143,10 @@ class Config:
         # [1] http://freedesktop.org/wiki/Software/shared-mime-info
         self.shared_mime_info_prefix = "/usr"
 
+        # MISIT: allow output access
+        self.enable_output_stdout = False
+        self.enable_output_stderr = False
+
         # AdminWebServer.
         self.admin_listen_address = ""
         self.admin_listen_port = 8889

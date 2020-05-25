@@ -37,7 +37,7 @@ from abc import ABCMeta, abstractmethod
 from cms import FEEDBACK_LEVEL_RESTRICTED
 from cms.locale import DEFAULT_TRANSLATION
 from cms.server.jinja2_toolbox import GLOBAL_ENVIRONMENT
-
+from cms import config
 
 logger = logging.getLogger(__name__)
 
@@ -276,23 +276,31 @@ class ScoreTypeGroup(ScoreTypeAlone):
                       {{ tc["text"]|format_status_text }}
                     </td>
             {% if "evaluation_stdout" in tc and tc["evaluation_stdout"] is not none and "evaluation_stderr" in tc and tc["evaluation_stderr"] is not none %}
-                <td class="std_btn">
-                <div class="dropdown">
+                {% if "show_stdout" in tc and "show_stderr" in tc and (tc["show_stdout"] or tc["show_stderr"]) %}
+                    <td class="std_btn">
+                    <div class="dropdown">
                     <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">Download outputs
                     <span class="caret"></span></button>
                     <ul class="dropdown-menu">
+                        {% if tc["show_stdout"] %}
                         <li>
                             <a download="stdout.txt" onclick="accessOutput(this, utils.contest_url('tasks', '{{ tc["task_name"] }}', 'submissions', '{{ tc["submission_num"] }}', 'detailsREST', '{{ tc["idx"] }}', 'stdout'));">
                             stdout
                             </a>
                         </li>
+                        {% endif %}
+                        {% if tc["show_stderr"] %}
                         <li>
                             <a download="stderr.txt" onclick="accessOutput(this, utils.contest_url('tasks', '{{ tc["task_name"] }}', 'submissions', '{{ tc["submission_num"] }}', 'detailsREST', '{{ tc["idx"] }}', 'stderr'));">
                             stderr
                             </a>
                         </li>
+                        {% endif %}
                     </ul>
                     </td>
+                {% else %}
+                    <td class="std_btn">Output disabled</td>
+                {% endif %}
             {% else %}
                     <td class="std_btn">Info missing</td>
             {% endif %}
@@ -438,6 +446,8 @@ function accessOutput(obj,link_url) {
                     "memory": evaluations[tc_idx].execution_memory,
                     "evaluation_stdout": evaluations[tc_idx].evaluation_stdout,
                     "evaluation_stderr": evaluations[tc_idx].evaluation_stderr,
+                    "show_stdout": config.enable_output_stdout,
+                    "show_stderr": config.enable_output_stderr,
                     "show_in_restricted_feedback": previous_tc_all_correct})
 
                 if self.public_testcases[tc_idx]:

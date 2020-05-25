@@ -357,9 +357,9 @@ class SubmissionDetailsRESTHandler(ContestHandler):
             if found_element is None:
                 raise tornado.web.HTTPError(400)
 
-            if std_type == "stdout":
+            if std_type == "stdout" and config.enable_output_stdout:
                 self.write(found_element["evaluation_stdout"])
-            elif std_type == "stderr":
+            elif std_type == "stderr" and config.enable_output_stderr:
                 self.write(found_element["evaluation_stderr"])
             else:
                 raise tornado.web.HTTPError(400)
