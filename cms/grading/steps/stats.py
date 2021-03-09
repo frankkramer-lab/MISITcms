@@ -51,9 +51,9 @@ def execution_stats(sandbox, collect_output=True):
         stats["signal"] = sandbox.get_killing_signal()
 
     if collect_output:
-        stats["stdout"] = sandbox.get_file_to_string(sandbox.stdout_file)\
+        stats["stdout"] = sandbox.get_file_to_string(sandbox.stdout_file, maxlen=1024*1024)\
             .decode("utf-8", errors="replace").strip()
-        stats["stderr"] = sandbox.get_file_to_string(sandbox.stderr_file)\
+        stats["stderr"] = sandbox.get_file_to_string(sandbox.stderr_file, maxlen=1024*1024)\
             .decode("utf-8", errors="replace").strip()
 
     return stats
