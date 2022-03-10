@@ -38,7 +38,7 @@ class Python38CPython(CompiledLanguage):
     @property
     def name(self):
         """See Language.name."""
-        return "Python 3 / CPython"
+        return "Python 3.8 / CPython"
 
     @property
     def source_extensions(self):
