@@ -332,17 +332,17 @@ class SubmissionDetailsRESTHandler(ContestHandler):
 
     refresh_cookie = False
 
-    @tornado.web.authenticated
+    @tornado_web.authenticated
     @actual_phase_required(0, 3)
     @multi_contest
     def get(self, task_name, submission_num, task_idx, std_type):
         task = self.get_task(task_name)
         if task is None:
-            raise tornado.web.HTTPError(404)
+            raise tornado_web.HTTPError(404)
 
         submission = self.get_submission(task, submission_num)
         if submission is None:
-            raise tornado.web.HTTPError(404)
+            raise tornado_web.HTTPError(404)
 
         sr = submission.get_result(task.active_dataset)
         score_type = task.active_dataset.score_type_object
@@ -358,16 +358,16 @@ class SubmissionDetailsRESTHandler(ContestHandler):
                     break
 
             if found_element is None:
-                raise tornado.web.HTTPError(400)
+                raise tornado_web.HTTPError(400)
 
             if std_type == "stdout" and config.enable_output_stdout:
                 self.write(found_element["evaluation_stdout"])
             elif std_type == "stderr" and config.enable_output_stderr:
                 self.write(found_element["evaluation_stderr"])
             else:
-                raise tornado.web.HTTPError(400)
+                raise tornado_web.HTTPError(400)
         else:
-            raise tornado.web.HTTPError(400)
+            raise tornado_web.HTTPError(400)
 
 class SubmissionFileHandler(FileHandler):
     """Send back a submission file.
