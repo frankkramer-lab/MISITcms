@@ -231,7 +231,7 @@ class SandboxBase(metaclass=ABCMeta):
             # Max processes is set to 1000 to limit the effect of fork bombs.
             self.max_processes = 1000
         else:
-            self.max_processes = 16
+            self.max_processes = 64
 
     def get_stats(self):
         """Return a human-readable string representing execution time
