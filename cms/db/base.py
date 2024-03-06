@@ -30,7 +30,7 @@ from sqlalchemy.orm.exc import ObjectDeletedError
 from sqlalchemy.orm.session import object_session
 from sqlalchemy.types import \
     Boolean, Integer, Float, String, Unicode, Enum, DateTime, Interval, \
-    BigInteger
+    BigInteger, Text, UnicodeText
 
 from . import engine, metadata, CastingArray, Codename, Filename, \
     FilenameSchema, FilenameSchemaArray, Digest
@@ -43,6 +43,8 @@ _TYPE_MAP = {
     OID: int,
     Float: float,
     Enum: str,
+    UnicodeText: str,
+    Text: str,
     Unicode: str,
     String: str,  # TODO Use bytes.
     Codename: str,
