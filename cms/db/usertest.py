@@ -28,7 +28,7 @@ from sqlalchemy.orm.collections import attribute_mapped_collection
 from sqlalchemy.schema import Column, ForeignKey, ForeignKeyConstraint, \
     UniqueConstraint
 from sqlalchemy.types import Integer, Float, String, Unicode, DateTime, \
-    BigInteger
+    BigInteger, Text
 
 from . import Filename, FilenameSchema, Digest, Base, Participation, Task, \
     Dataset
@@ -357,10 +357,10 @@ class UserTestResult(Base):
 
     # stdout, stderr
     evaluation_stdout = Column(
-        String,
+        Text,
         nullable=True)
     evaluation_stderr = Column(
-        String,
+        Text,
         nullable=True)
 
     # These one-to-many relationships are the reversed directions of
